@@ -29,7 +29,8 @@ body {
 
 /* Header */
 .app-header {
-  flex-shrink:0; height:var(--header-h);
+  flex-shrink:0;
+  height:calc(var(--header-h) + env(safe-area-inset-top,0px));
   padding-top:env(safe-area-inset-top,0px);
   background:rgba(22,27,34,.97); border-bottom:2px solid var(--accent);
   display:flex; align-items:center; padding-left:16px; padding-right:16px; gap:12px;
@@ -265,15 +266,18 @@ db.collection('settings').doc('config').onSnapshot(snap => {
     settings.dnfUnderPoints= d.dnfUnderPoints?? 1;
   }
   renderAll();
-});
+}, () => renderAll());
 db.collection('roster').orderBy('name').onSnapshot(snap => {
   roster = snap.docs.map(d => ({ id:d.id, ...d.data() }));
   renderAll();
-});
+}, () => renderAll());
 db.collection('rounds').orderBy('createdAt').onSnapshot(snap => {
   rounds = snap.docs.map(d => ({ id:d.id, ...d.data() }));
   renderAll();
-});
+}, () => renderAll());
+
+// Fallback: clear spinners after 6s if Firebase hasn't responded
+setTimeout(renderAll, 6000);
 
 // ── Nav ───────────────────────────────────────────────────────────────────
 function showTab(name, btn) {
