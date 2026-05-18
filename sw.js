@@ -1,4 +1,4 @@
-const CACHE = 'opmo-v1';
+const CACHE = 'opmo-v2';
 const ASSETS = ['./', './index.html', './manifest.json',
   './OpMo_eMotorsport_League_red_TPBG_NEG.png', './Spa-2.jpg', './favicon.ico'];
 
