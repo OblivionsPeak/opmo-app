@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="OpMo">
+<title>Operation eMotorsport League</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="OpMo_eMotorsport_League_red_TPBG_NEG.png">
+<style>
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg: #0d1117; --surface: #161b22; --surface2: #1c2128; --border: #30363d;
+  --accent: #c4a87a; --accent-dim: rgba(196,168,122,.12);
+  --text: #e6edf3; --muted: #7d8590; --danger: #f85149; --success: #3fb950;
+  --pro: #e85050; --proben: #e89050; --ben: #50c878; --open: #4b8fe8;
+  --nav-h: 62px; --header-h: 54px;
+}
+html,body { height:100%; overflow:hidden; font-family:'Segoe UI',system-ui,-apple-system,sans-serif; font-size:14px; color:var(--text); background:var(--bg); }
+body {
+  background-image: linear-gradient(rgba(13,17,23,.87),rgba(13,17,23,.87)), url('Spa-2.jpg');
+  background-size:cover; background-position:center 40%; background-attachment:fixed;
+}
+#app { display:flex; flex-direction:column; height:100%; height:100dvh; }
+
+/* Header */
+.app-header {
+  flex-shrink:0; height:var(--header-h);
+  padding-top:env(safe-area-inset-top,0px);
+  background:rgba(22,27,34,.97); border-bottom:2px solid var(--accent);
+  display:flex; align-items:center; padding-left:16px; padding-right:16px; gap:12px;
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+}
+.app-header img { height:30px; width:auto; }
+.app-header .title { font-weight:700; font-size:14px; color:var(--accent); letter-spacing:.04em; }
+.app-header .season-chip {
+  margin-left:auto; font-size:11px; font-weight:700; color:var(--muted);
+  background:var(--surface2); border:1px solid var(--border);
+  padding:3px 10px; border-radius:20px; letter-spacing:.04em;
+}
+
+/* Content */
+.app-content { flex:1; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; }
+
+/* Bottom nav */
+.bottom-nav {
+  flex-shrink:0;
+  height:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  background:rgba(22,27,34,.98); border-top:1px solid var(--border);
+  display:flex; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+}
+.nav-btn {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:3px; border:none; background:none; color:var(--muted);
+  font-size:10px; font-weight:600; letter-spacing:.03em; cursor:pointer; transition:color .15s;
+}
+.nav-btn.active { color:var(--accent); }
+.nav-btn svg { width:22px; height:22px; }
+
+/* Tabs */
+.tab { display:none; padding:16px; padding-bottom:24px; }
+.tab.active { display:block; }
+
+/* Cards */
+.card { background:rgba(22,27,34,.92); border:1px solid var(--border); border-radius:12px; overflow:hidden; backdrop-filter:blur(4px); margin-bottom:12px; }
+.card-body { padding:16px; }
+
+/* Section label */
+.sec-label { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; margin-top:2px; }
+
+/* Loading / empty */
+.loading-state { display:flex; align-items:center; justify-content:center; padding:36px 16px; color:var(--muted); gap:10px; font-size:13px; }
+.spinner { width:18px; height:18px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; flex-shrink:0; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.empty-state { padding:28px 16px; text-align:center; color:var(--muted); font-size:13px; }
+
+/* ── HOME ──────────────────────────────────────────────────────── */
+.home-hero { text-align:center; padding:28px 16px 20px; }
+.hero-next-label { font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
+.hero-round-sub { font-size:12px; color:var(--muted); margin-bottom:10px; }
+.hero-track { font-size:21px; font-weight:800; color:var(--text); line-height:1.2; margin-bottom:6px; }
+.hero-flag { font-size:32px; display:block; margin-bottom:20px; }
+
+.countdown { display:flex; justify-content:center; gap:8px; margin-bottom:20px; }
+.cd-unit { background:rgba(22,27,34,.95); border:1px solid var(--border); border-radius:10px; padding:10px 6px 8px; min-width:58px; text-align:center; }
+.cd-num { font-size:26px; font-weight:800; color:var(--accent); line-height:1; font-variant-numeric:tabular-nums; }
+.cd-lbl { font-size:9px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-top:3px; }
+
+.race-chip { display:inline-flex; align-items:center; gap:6px; background:var(--accent-dim); border:1px solid rgba(196,168,122,.25); border-radius:20px; padding:6px 14px; font-size:12px; color:var(--accent); font-weight:600; }
+
+.standings-preview-row { display:flex; align-items:center; gap:10px; padding:9px 16px; border-bottom:1px solid var(--border); font-size:13px; }
+.standings-preview-row:last-child { border-bottom:none; }
+
+/* ── SCHEDULE ─────────────────────────────────────────────────── */
+.sched-item { display:flex; align-items:center; padding:13px 16px; border-bottom:1px solid var(--border); gap:12px; }
+.sched-item:last-child { border-bottom:none; }
+.sched-item.past { opacity:.45; }
+.sched-item.is-next { background:var(--accent-dim); }
+.sched-rnum { font-size:11px; font-weight:700; color:var(--muted); min-width:24px; }
+.sched-flag { font-size:20px; flex-shrink:0; }
+.sched-info { flex:1; min-width:0; }
+.sched-track { font-weight:700; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sched-meta { font-size:11px; color:var(--muted); margin-top:2px; }
+.sched-badge { font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+.badge-done { background:var(--surface2); color:var(--muted); }
+.badge-next { background:var(--accent); color:#0f1117; }
+.badge-up { background:var(--surface2); color:var(--muted); border:1px solid var(--border); }
+
+/* ── STANDINGS ────────────────────────────────────────────────── */
+.class-tabs { display:flex; gap:6px; margin-bottom:14px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px; scrollbar-width:none; }
+.class-tabs::-webkit-scrollbar { display:none; }
+.class-tab { flex-shrink:0; padding:6px 14px; border-radius:20px; border:1px solid var(--border); background:var(--surface); color:var(--muted); font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.class-tab.active { background:var(--accent); color:#0f1117; border-color:var(--accent); }
+
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { background:var(--surface2); color:var(--muted); font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:8px 10px; text-align:left; border-bottom:1px solid var(--border); }
+td { padding:9px 10px; border-bottom:1px solid var(--border); }
+tr:last-child td { border-bottom:none; }
+.pos-badge { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:50%; font-size:11px; font-weight:800; }
+.pos-1 { background:linear-gradient(135deg,#ffd700,#b8860b); color:#0d1117; }
+.pos-2 { background:linear-gradient(135deg,#c0c0c0,#808080); color:#0d1117; }
+.pos-3 { background:linear-gradient(135deg,#cd7f32,#8b4513); color:#fff; }
+.pos-other { background:var(--surface2); color:var(--muted); }
+.pts-cell { color:var(--accent); font-weight:700; text-align:right; }
+.pts-drop { color:var(--muted); text-decoration:line-through; text-align:right; }
+.pts-total { color:var(--accent); font-weight:800; font-size:15px; text-align:right; }
+
+/* ── RESULTS ──────────────────────────────────────────────────── */
+.res-round { background:rgba(22,27,34,.92); border:1px solid var(--border); border-radius:12px; margin-bottom:10px; overflow:hidden; }
+.res-header { display:flex; align-items:center; padding:14px 16px; gap:12px; cursor:pointer; user-select:none; }
+.res-num { width:28px; height:28px; border-radius:50%; background:var(--accent); color:#0f1117; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.res-body { display:none; padding:0 16px 14px; }
+.res-body.open { display:block; }
+.res-cls-label { font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:12px 0 6px; }
+
+::-webkit-scrollbar { width:3px; height:3px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="app-header">
+    <img src="OpMo_eMotorsport_League_red_TPBG_NEG.png" alt="OpMo">
+    <span class="title">eMotorsport League</span>
+    <span class="season-chip">SEASON 13</span>
+  </header>
+
+  <main class="app-content">
+
+    <!-- HOME -->
+    <section class="tab active" id="tab-home">
+      <div class="home-hero">
+        <div class="hero-next-label">Next Race</div>
+        <div class="hero-round-sub" id="next-round-sub">Loading…</div>
+        <div class="hero-track" id="next-track">—</div>
+        <span class="hero-flag" id="next-flag">🏁</span>
+        <div class="countdown">
+          <div class="cd-unit"><div class="cd-num" id="cd-d">--</div><div class="cd-lbl">Days</div></div>
+          <div class="cd-unit"><div class="cd-num" id="cd-h">--</div><div class="cd-lbl">Hours</div></div>
+          <div class="cd-unit"><div class="cd-num" id="cd-m">--</div><div class="cd-lbl">Mins</div></div>
+          <div class="cd-unit"><div class="cd-num" id="cd-s">--</div><div class="cd-lbl">Secs</div></div>
+        </div>
+        <div class="race-chip">🕕 Every Other Tuesday · 6:00 PM CT</div>
+      </div>
+
+      <div>
+        <div class="sec-label">Standings Snapshot</div>
+        <div class="card" id="home-standings">
+          <div class="loading-state"><div class="spinner"></div> Loading…</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCHEDULE -->
+    <section class="tab" id="tab-schedule">
+      <div class="sec-label">Season 13 — 8 Rounds</div>
+      <div class="card" style="padding:0;">
+        <div id="schedule-list"></div>
+      </div>
+    </section>
+
+    <!-- STANDINGS -->
+    <section class="tab" id="tab-standings">
+      <div class="class-tabs" id="class-tabs"></div>
+      <div class="card" style="padding:0;overflow-x:auto;">
+        <div id="standings-table"><div class="loading-state"><div class="spinner"></div> Loading…</div></div>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="tab" id="tab-results">
+      <div id="results-list"><div class="loading-state"><div class="spinner"></div> Loading…</div></div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="showTab('home',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </button>
+    <button class="nav-btn" onclick="showTab('schedule',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Schedule
+    </button>
+    <button class="nav-btn" onclick="showTab('standings',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Standings
+    </button>
+    <button class="nav-btn" onclick="showTab('results',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      Results
+    </button>
+  </nav>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+// ── Schedule ──────────────────────────────────────────────────────────────
+const SCHEDULE = [
+  { round:1, date:new Date('2026-07-07T23:00:00Z'), track:'Daytona International Speedway',   flag:'🇺🇸', city:'Daytona Beach, USA' },
+  { round:2, date:new Date('2026-07-21T23:00:00Z'), track:'Monza Combined Circuit',            flag:'🇮🇹', city:'Monza, Italy' },
+  { round:3, date:new Date('2026-08-04T23:00:00Z'), track:'Fuji International Speedway',       flag:'🇯🇵', city:'Oyama, Japan' },
+  { round:4, date:new Date('2026-08-18T23:00:00Z'), track:'Circuit de Spa-Francorchamps',      flag:'🇧🇪', city:'Stavelot, Belgium' },
+  { round:5, date:new Date('2026-09-01T23:00:00Z'), track:'Autodromo Nazionale Monza',         flag:'🇮🇹', city:'Monza, Italy' },
+  { round:6, date:new Date('2026-09-15T23:00:00Z'), track:'Circuit Gilles Villeneuve',         flag:'🇨🇦', city:'Montréal, Canada' },
+  { round:7, date:new Date('2026-09-29T23:00:00Z'), track:'Circuit des 24 Heures du Mans',     flag:'🇫🇷', city:'Le Mans, France' },
+  { round:8, date:new Date('2026-10-06T23:00:00Z'), track:'Silverstone Circuit',               flag:'🇬🇧', city:'Silverstone, England' },
+];
+
+// ── Firebase ──────────────────────────────────────────────────────────────
+firebase.initializeApp({
+  apiKey: "AIzaSyBCmOk5BeUOcX7y_0araxAqco_hJ8E4H94",
+  authDomain: "operation-motorsport-scoring.firebaseapp.com",
+  projectId: "operation-motorsport-scoring",
+  storageBucket: "operation-motorsport-scoring.firebasestorage.app",
+  messagingSenderId: "464083122390",
+  appId: "1:464083122390:web:12f78d594c8ea51fa1b177"
+});
+const db = firebase.firestore();
+
+const CLASS_NAMES = ['Pro','Pro-Ben','Beneficiary','Open'];
+const DEFAULT_POINTS = [25,18,15,12,10,8,6,4,2,1];
+
+let roster = [], rounds = [], activeClass = CLASS_NAMES[0];
+let settings = { pointsTable:[...DEFAULT_POINTS], dropRounds:2, fastLapPoints:1, safeRacePoints:1, dnfOverPoints:2, dnfUnderPoints:1 };
+
+db.collection('settings').doc('config').onSnapshot(snap => {
+  if (snap.exists) {
+    const d = snap.data();
+    settings.pointsTable   = d.pointsTable   || [...DEFAULT_POINTS];
+    settings.dropRounds    = d.dropRounds    ?? 2;
+    settings.fastLapPoints = d.fastLapPoints ?? 1;
+    settings.safeRacePoints= d.safeRacePoints?? 1;
+    settings.dnfOverPoints = d.dnfOverPoints ?? 2;
+    settings.dnfUnderPoints= d.dnfUnderPoints?? 1;
+  }
+  renderAll();
+});
+db.collection('roster').orderBy('name').onSnapshot(snap => {
+  roster = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+  renderAll();
+});
+db.collection('rounds').orderBy('createdAt').onSnapshot(snap => {
+  rounds = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+  renderAll();
+});
+
+// ── Nav ───────────────────────────────────────────────────────────────────
+function showTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  document.querySelector('.app-content').scrollTo(0, 0);
+}
+
+// ── Utils ─────────────────────────────────────────────────────────────────
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const pad = n => String(n).padStart(2,'0');
+const fmtDate = d => d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+// ── Standings computation ─────────────────────────────────────────────────
+function computeStandings(cls) {
+  const drivers = roster.filter(d => d.cls === cls);
+  const pts = settings.pointsTable;
+  const roundPoints = {};
+
+  for (const rnd of rounds) {
+    const cr = (rnd.results||[])
+      .filter(r => { const d = roster.find(x => x.id===r.driverId); return d && d.cls===cls; })
+      .sort((a,b) => (a.dnf?1:0)-(b.dnf?1:0) || a.overallPos-b.overallPos);
+    cr.forEach((r,i) => {
+      if (!roundPoints[r.driverId]) roundPoints[r.driverId] = {};
+      roundPoints[r.driverId][rnd.id] = r.dnf
+        ? (r.dnfType==='over' ? settings.dnfOverPoints : r.dnfType==='under' ? settings.dnfUnderPoints : 0)
+        : (pts[i]||0);
+    });
+    if (rnd.fastLapDriverId) {
+      const d = roster.find(x => x.id===rnd.fastLapDriverId);
+      if (d && d.cls===cls && roundPoints[rnd.fastLapDriverId]?.[rnd.id]!==undefined)
+        roundPoints[rnd.fastLapDriverId][rnd.id] += settings.fastLapPoints;
+    }
+    for (const id of (rnd.safeRaceDriverIds||[])) {
+      const d = roster.find(x => x.id===id);
+      if (d && d.cls===cls && roundPoints[id]?.[rnd.id]!==undefined)
+        roundPoints[id][rnd.id] += settings.safeRacePoints;
+    }
+  }
+
+  return drivers.map(d => {
+    const allPts = rounds.map(rnd => roundPoints[d.id]?.[rnd.id] ?? null);
+    const scored = allPts.filter(p => p!==null);
+    let dropIdx = [], total = 0;
+    if (settings.dropRounds > 0 && scored.length > settings.dropRounds) {
+      const toDrop = [...scored].sort((a,b)=>a-b).slice(0,settings.dropRounds);
+      const rem = [...toDrop];
+      allPts.forEach((p,i) => {
+        if (p===null) return;
+        const idx = rem.indexOf(p);
+        if (idx!==-1) { dropIdx.push(i); rem.splice(idx,1); }
+      });
+      total = allPts.reduce((s,p,i) => s+(p!==null&&!dropIdx.includes(i)?p:0),0);
+    } else {
+      total = scored.reduce((a,b)=>a+b,0);
+    }
+    return { driver:d, allPts, total, dropIdx };
+  }).sort((a,b)=>b.total-a.total);
+}
+
+// ── Countdown ─────────────────────────────────────────────────────────────
+function updateCountdown() {
+  const now = new Date();
+  const next = SCHEDULE.find(r => r.date > now);
+  if (!next) {
+    ['d','h','m','s'].forEach(id => document.getElementById('cd-'+id).textContent='00');
+    document.getElementById('next-round-sub').textContent = 'Season Complete';
+    document.getElementById('next-track').textContent = 'See you next season!';
+    document.getElementById('next-flag').textContent = '🏆';
+    return;
+  }
+  document.getElementById('next-round-sub').textContent = `Round ${next.round} of ${SCHEDULE.length} · ${next.city}`;
+  document.getElementById('next-track').textContent = next.track;
+  document.getElementById('next-flag').textContent = next.flag;
+  const diff = next.date - now;
+  document.getElementById('cd-d').textContent = pad(Math.floor(diff/86400000));
+  document.getElementById('cd-h').textContent = pad(Math.floor((diff%86400000)/3600000));
+  document.getElementById('cd-m').textContent = pad(Math.floor((diff%3600000)/60000));
+  document.getElementById('cd-s').textContent = pad(Math.floor((diff%60000)/1000));
+}
+
+// ── Home standings snapshot ───────────────────────────────────────────────
+function renderHomeStandings() {
+  const el = document.getElementById('home-standings');
+  if (!roster.length || !rounds.length) {
+    el.innerHTML = '<div class="empty-state">Standings will appear after races are recorded.</div>';
+    return;
+  }
+  let html = '';
+  for (const cls of CLASS_NAMES) {
+    const top = computeStandings(cls).slice(0,3);
+    if (!top.length) continue;
+    html += `<div style="padding:10px 16px 4px;border-bottom:1px solid var(--border)">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">${cls}</div>`;
+    top.forEach((s,i) => {
+      const medal = ['🥇','🥈','🥉'][i];
+      html += `<div class="standings-preview-row" style="padding:7px 0;">
+        <span style="font-size:18px;width:28px;">${medal}</span>
+        <span style="flex:1;font-weight:${i===0?700:400};font-size:13px;">${esc(s.driver.name)}</span>
+        <span style="color:var(--accent);font-weight:700;font-size:13px;">${s.total} pts</span>
+      </div>`;
+    });
+    html += '</div>';
+  }
+  el.innerHTML = html || '<div class="empty-state">No standings yet.</div>';
+}
+
+// ── Schedule ──────────────────────────────────────────────────────────────
+function renderSchedule() {
+  const now = new Date();
+  const nextRnd = SCHEDULE.find(r => r.date > now);
+  document.getElementById('schedule-list').innerHTML = SCHEDULE.map(r => {
+    const past = r.date <= now;
+    const isNext = nextRnd && r.round === nextRnd.round;
+    const badge = past
+      ? '<span class="sched-badge badge-done">✓ Done</span>'
+      : isNext
+        ? '<span class="sched-badge badge-next">Next ▶</span>'
+        : '<span class="sched-badge badge-up">Upcoming</span>';
+    return `<div class="sched-item ${past?'past':''} ${isNext?'is-next':''}">
+      <span class="sched-rnum">R${r.round}</span>
+      <span class="sched-flag">${r.flag}</span>
+      <div class="sched-info">
+        <div class="sched-track">${esc(r.track)}</div>
+        <div class="sched-meta">${fmtDate(r.date)} · ${r.city}</div>
+      </div>
+      ${badge}
+    </div>`;
+  }).join('');
+}
+
+// ── Standings ─────────────────────────────────────────────────────────────
+function renderClassTabs() {
+  document.getElementById('class-tabs').innerHTML = CLASS_NAMES.map(cls =>
+    `<button class="class-tab ${cls===activeClass?'active':''}" onclick="setClass('${cls}')">${cls}</button>`
+  ).join('');
+}
+function setClass(cls) { activeClass = cls; renderClassTabs(); renderStandingsTable(); }
+
+function renderStandingsTable() {
+  const el = document.getElementById('standings-table');
+  if (!rounds.length) { el.innerHTML='<div class="empty-state">No races recorded yet.</div>'; return; }
+  const data = computeStandings(activeClass);
+  if (!data.length) { el.innerHTML='<div class="empty-state">No drivers in this class.</div>'; return; }
+
+  const headers = rounds.map((rnd,i) =>
+    `<th style="text-align:right" title="${esc(rnd.name)}">${rnd.name.length>10?'R'+(i+1):esc(rnd.name)}</th>`
+  ).join('');
+
+  const rows = data.map((s,pos) => {
+    const badge = ['pos-1','pos-2','pos-3'][pos]||'pos-other';
+    const cells = s.allPts.map((p,i) => {
+      if (p===null) return '<td style="color:var(--muted);text-align:right">—</td>';
+      const drop = s.dropIdx.includes(i);
+      return `<td class="${drop?'pts-drop':'pts-cell'}">${p}${drop?'▾':''}</td>`;
+    }).join('');
+    return `<tr>
+      <td style="text-align:center;width:36px"><span class="pos-badge ${badge}">${pos+1}</span></td>
+      <td style="font-weight:${pos<3?700:400}">${esc(s.driver.name)}</td>
+      ${cells}
+      <td class="pts-total">${s.total}</td>
+    </tr>`;
+  }).join('');
+
+  el.innerHTML = `<table>
+    <thead><tr>
+      <th style="text-align:center">Pos</th><th>Driver</th>${headers}
+      <th style="text-align:right">Total</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  ${settings.dropRounds>0?`<p style="color:var(--muted);font-size:11px;padding:8px 10px;">▾ Worst ${settings.dropRounds} round(s) dropped from total</p>`:''}`;
+}
+
+// ── Results ───────────────────────────────────────────────────────────────
+function renderResults() {
+  const el = document.getElementById('results-list');
+  const done = rounds.filter(r => r.results && r.results.length > 0);
+  if (!done.length) { el.innerHTML='<div class="empty-state">No results yet.</div>'; return; }
+
+  el.innerHTML = [...done].reverse().map((rnd, ri) => {
+    const roundNum = rounds.indexOf(rnd) + 1;
+    const byClass = {};
+    CLASS_NAMES.forEach(c => byClass[c] = []);
+    (rnd.results||[]).forEach(r => {
+      const d = roster.find(x => x.id===r.driverId);
+      if (d) byClass[d.cls].push({ ...r, driver:d });
+    });
+    CLASS_NAMES.forEach(cls => byClass[cls].sort((a,b)=>(a.dnf?1:0)-(b.dnf?1:0)||a.overallPos-b.overallPos));
+
+    let classHtml = '';
+    for (const cls of CLASS_NAMES) {
+      const entries = byClass[cls];
+      if (!entries.length) continue;
+      classHtml += `<div class="res-cls-label">${cls}</div><table><tbody>`;
+      entries.forEach((r,i) => {
+        const p = r.dnf?(r.dnfType==='over'?settings.dnfOverPoints:r.dnfType==='under'?settings.dnfUnderPoints:0):(settings.pointsTable[i]||0);
+        const badge = ['pos-1','pos-2','pos-3'][i]||'pos-other';
+        classHtml += `<tr>
+          <td style="width:30px"><span class="pos-badge ${badge}" style="width:20px;height:20px;font-size:10px;">${r.dnf?'—':i+1}</span></td>
+          <td>${esc(r.driver.name)}</td>
+          <td style="color:var(--accent);font-weight:700;text-align:right">${p} pts</td>
+        </tr>`;
+      });
+      classHtml += '</tbody></table>';
+    }
+
+    return `<div class="res-round">
+      <div class="res-header" onclick="toggleRes(this)">
+        <div class="res-num">${roundNum}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:13px;">${esc(rnd.name)}</div>
+          <div style="color:var(--muted);font-size:12px;">${rnd.date?fmtDate(new Date(rnd.date)):''} · ${rnd.results.length} results</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="res-body">${classHtml||'<div class="empty-state">No classified results.</div>'}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleRes(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+  const poly = header.querySelector('polyline');
+  if (poly) poly.setAttribute('points', body.classList.contains('open') ? '6 15 12 9 18 15' : '6 9 12 15 18 9');
+}
+
+// ── Render all ────────────────────────────────────────────────────────────
+function renderAll() {
+  renderHomeStandings();
+  renderSchedule();
+  renderClassTabs();
+  renderStandingsTable();
+  renderResults();
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+renderSchedule();
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
